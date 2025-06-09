@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sexta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            margin: 10px 0;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .buttons {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sexta</h1>
+    
+    <div class="buttons">
+        <button onclick="saveFile()">Salvar</button>
+        <button onclick="loadFile()">Recarregar</button>
+        <button onclick="clearFile()">Limpar</button>
+    </div>
+    
+    <textarea id="textEditor" placeholder="Digite seu texto aqui..."></textarea>
+    
+    <script>
+        // Carrega o arquivo quando a página é aberta
+        window.onload = function() {
+            loadFile();
+        };
+        
+        // Função para salvar o texto no localStorage
+        function saveFile() {
+            const text = document.getElementById('textEditor').value;
+            localStorage.setItem('savedTextSex4', text);
+            alert('Texto salvo com sucesso!');
+        }
+        
+        // Função para carregar o texto do localStorage
+        function loadFile() {
+            const savedTextSex4 = localStorage.getItem('savedTextSex4') || '';
+            document.getElementById('textEditor').value = savedTextSex4;
+        }
+        
+        // Função para limpar o editor
+        function clearFile() {
+            if(confirm('Tem certeza que deseja limpar o texto?')) {
+                document.getElementById('textEditor').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
