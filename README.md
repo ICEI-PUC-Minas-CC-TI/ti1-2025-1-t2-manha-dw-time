@@ -71,12 +71,6 @@ json-server --watch db.json
 - Sistema de notificações visuais e por e-mail (via EmailJS)
 - Animação de carregamento suave entre páginas
 
-## 📧 Integração com EmailJS
-
-As notificações por e-mail estão integradas para:
-- Criação de tarefa
-- Exclusão de tarefa
-- Tarefa vencida
 
 ## 👤 Dados de Teste
 
