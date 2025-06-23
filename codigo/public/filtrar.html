@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Filtrar e Editar Tarefas</title>
+  <link rel="stylesheet" href="css/animacoes.css">
+  <link rel="stylesheet" href="css/modoEscuro.css">
+  <link rel="stylesheet" href="css/favorita.css">
+  <script src="js/modoEscuro.js"></script>
+  <script src="js/feedback.js"></script>
+  <script src="js/favorita.js"></script>
+  <script src="js/som.js"></script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin-left: 240px;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    input, select {
+      padding: 10px;
+      margin: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 16px;
+      background: #4b0082;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 8px 4px;
+    }
+    .tarefa {
+      background: #f3f3f3;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="feedback"></div>
+  <h1>🔍 Filtrar e Editar Tarefa</h1>
+  <input type="text" id="filtroNome" placeholder="Buscar por nome">
+  <select id="filtroCategoria">
+    <option value="">Todas categorias</option>
+    <option value="trabalho">Trabalho</option>
+    <option value="pessoal">Pessoal</option>
+  </select>
+  <select id="filtroImportancia">
+    <option value="">Todas importâncias</option>
+    <option value="alta">Alta</option>
+    <option value="media">Média</option>
+    <option value="baixa">Baixa</option>
+  </select>
+  <select id="filtroStatus">
+    <option value="">Todos status</option>
+    <option value="afazer">A Fazer</option>
+    <option value="concluidas">Concluídas</option>
+    <option value="atrasadas">Atrasadas</option>
+  </select>
+  <input type="date" id="filtroData">
+  <button onclick="filtrar()">Filtrar</button>
+  <div id="resultados"></div>
+
+<script>
+async function filtrar() {
+  const nome = document.getElementById("filtroNome").value.toLowerCase();
+  const categoria = document.getElementById("filtroCategoria").value;
+  const importancia = document.getElementById("filtroImportancia").value;
+  const status = document.getElementById("filtroStatus").value;
+  const data = document.getElementById("filtroData").value;
+
+  const res = await fetch("http://localhost:3000/tarefas");
+  const tarefas = await res.json();
+
+  const hoje = new Date().toISOString().split("T")[0];
+
+  const filtradas = tarefas.filter(t => {
+    const isConcluida = t.concluida;
+    const isAtrasada = !isConcluida && t.data < hoje;
+    const isAfazer = !isConcluida && t.data >= hoje;
+
+    return (!nome || t.nome.toLowerCase().includes(nome)) &&
+           (!categoria || t.categoria === categoria) &&
+           (!importancia || t.importancia === importancia) &&
+           (!data || t.data === data) &&
+           (!status ||
+             (status === "concluidas" && isConcluida) ||
+             (status === "atrasadas" && isAtrasada) ||
+             (status === "afazer" && isAfazer)
+           );
+  });
+
+  document.getElementById("resultados").innerHTML = filtradas.map(t => `
+    <div class="tarefa" id="tarefa-${t.id}">
+      <input value="${t.nome}" id="nome-${t.id}">
+      <input value="${t.categoria}" id="categoria-${t.id}">
+      <select id="importancia-${t.id}">
+        <option ${t.importancia === "alta" ? "selected" : ""}>alta</option>
+        <option ${t.importancia === "media" ? "selected" : ""}>media</option>
+        <option ${t.importancia === "baixa" ? "selected" : ""}>baixa</option>
+      </select>
+      <input type="date" value="${t.data}" id="data-${t.id}">
+      <button onclick="salvar(${t.id})">Salvar</button>
+    </div>
+  `).join("");
+}
+
+async function salvar(id) {
+  const nome = document.getElementById("nome-" + id).value;
+  const categoria = document.getElementById("categoria-" + id).value;
+  const importancia = document.getElementById("importancia-" + id).value;
+  const data = document.getElementById("data-" + id).value;
+
+  await fetch("http://localhost:3000/tarefas/" + id, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nome, categoria, importancia, data })
+  });
+
+  mostrarFeedback("✅ Tarefa atualizada!");
+}
+</script>
+</body>
+</html>

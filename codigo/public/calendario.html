@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendário</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #7C3AED;
+      color: white;
+      padding: 20px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      flex: 1;
+      background: #fff;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 28px;
+      color: #7C3AED;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  
+<script>
+if (!localStorage.getItem("usuarioLogado")) {
+  window.location.href = "login.html";
+}
+</script>
+
+  
+<div class="sidebar">
+  <h2 id="bemvindo">Menu</h2>
+  <a href="criar.html">➕ Criar Tarefa</a>
+  <a href="atrasadas.html">⏰ Atrasadas</a>
+  <a href="afazer.html">📝 A Fazer</a>
+  <a href="concluidas.html">✅ Concluídas</a>
+  <a href="filtrar.html">🔎 Filtrar</a>
+  <a href="login.html" onclick="localStorage.clear()">🚪 Sair</a>
+</div>
+<script>
+  const nome = localStorage.getItem("nomeLogado") || '';
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("bemvindo").innerText = `Olá, ${nome}`;
+  });
+</script>
+
+  <div class="content">
+    <h1>Calendário</h1>
+    
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: Montserrat, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 100%;
+  background: #1f1f1f;
+  color: white;
+  padding: 20px;
+}
+.content {
+  margin-left: 240px;
+  padding: 20px;
+}
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  .content {
+    margin-left: 0;
+  }
+}
+.notification {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: #fffae6;
+  border: 1px solid #ffd633;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
+}
+</style>
+<div class="notification" id="notificacao">🔔 Nova tarefa adicionada!</div>
+
+<div style="position: fixed; left: 0; top: 0; width: 220px; height: 100%; background: #1f1f1f; color: white; padding: 20px; font-family: Montserrat">
+  <h2>📋 Tarefas</h2>
+  <p><strong>👤 Usuário:</strong> <span id="usuario-logado">Kele</span></p>
+  <a href="inicio.html" style="color:white;">🏠 Início</a><br>
+  <a href="criar.html" style="color:white;">✍️ Criar</a><br>
+  <a href="atrasadas.html" style="color:white;">⏰ Atrasadas</a><br>
+  <a href="afazer.html" style="color:white;">📆 A Fazer</a><br>
+  <a href="concluidas.html" style="color:white;">✅ Concluídas</a><br>
+  <a href="filtrar.html" style="color:white;">🔍 Filtrar</a><br>
+  <a href="index.html" style="color:white;">🚪 Sair</a>
+
+  <a href="dashboard.html" style="color:white;">📈 Dashboard</a><br>
+  <a href="calendario.html" style="color:white;">📅 Calendário</a><br>
+</div>
+
+<div class="content"><table border="1" style="width:100%; text-align:center; border-collapse: collapse;"><caption style="font-size: 24px; padding: 10px;">📅 June 2025</caption><tr><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th><th>Dom</th></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td id="dia-1"><strong>1</strong><div class="tarefas-dia"></div></td></tr><tr><td id="dia-2"><strong>2</strong><div class="tarefas-dia"></div></td><td id="dia-3"><strong>3</strong><div class="tarefas-dia"></div></td><td id="dia-4"><strong>4</strong><div class="tarefas-dia"></div></td><td id="dia-5"><strong>5</strong><div class="tarefas-dia"></div></td><td id="dia-6"><strong>6</strong><div class="tarefas-dia"></div></td><td id="dia-7"><strong>7</strong><div class="tarefas-dia"></div></td><td id="dia-8"><strong>8</strong><div class="tarefas-dia"></div></td></tr><tr><td id="dia-9"><strong>9</strong><div class="tarefas-dia"></div></td><td id="dia-10"><strong>10</strong><div class="tarefas-dia"></div></td><td id="dia-11"><strong>11</strong><div class="tarefas-dia"></div></td><td id="dia-12"><strong>12</strong><div class="tarefas-dia"></div></td><td id="dia-13"><strong>13</strong><div class="tarefas-dia"></div></td><td id="dia-14"><strong>14</strong><div class="tarefas-dia"></div></td><td id="dia-15"><strong>15</strong><div class="tarefas-dia"></div></td></tr><tr><td id="dia-16"><strong>16</strong><div class="tarefas-dia"></div></td><td id="dia-17"><strong>17</strong><div class="tarefas-dia"></div></td><td id="dia-18"><strong>18</strong><div class="tarefas-dia"></div></td><td id="dia-19"><strong>19</strong><div class="tarefas-dia"></div></td><td id="dia-20"><strong>20</strong><div class="tarefas-dia"></div></td><td id="dia-21"><strong>21</strong><div class="tarefas-dia"></div></td><td id="dia-22"><strong>22</strong><div class="tarefas-dia"></div></td></tr><tr><td id="dia-23"><strong>23</strong><div class="tarefas-dia"></div></td><td id="dia-24"><strong>24</strong><div class="tarefas-dia"></div></td><td id="dia-25"><strong>25</strong><div class="tarefas-dia"></div></td><td id="dia-26"><strong>26</strong><div class="tarefas-dia"></div></td><td id="dia-27"><strong>27</strong><div class="tarefas-dia"></div></td><td id="dia-28"><strong>28</strong><div class="tarefas-dia"></div></td><td id="dia-29"><strong>29</strong><div class="tarefas-dia"></div></td></tr><tr><td id="dia-30"><strong>30</strong><div class="tarefas-dia"></div></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>
+    <script>
+    async function carregarCalendario() {
+      const res = await fetch("http://localhost:3000/tarefas");
+      const tarefas = await res.json();
+      tarefas.forEach(t => {
+        const dia = new Date(t.data).getDate();
+        const container = document.querySelector("#dia-" + dia + " .tarefas-dia");
+        if (container) {
+          const div = document.createElement("div");
+          div.style.fontSize = "12px";
+          div.style.background = "#f0f0f0";
+          div.style.margin = "2px";
+          div.style.padding = "2px";
+          div.innerText = t.titulo;
+          container.appendChild(div);
+        }
+      });
+    }
+    carregarCalendario();
+    </script>
+    </div>
+<script>
+let tarefasAnteriores = [];
+
+async function verificarNovasTarefas() {
+  const res = await fetch("http://localhost:3000/tarefas");
+  const tarefas = await res.json();
+  if (tarefas.length > tarefasAnteriores.length) {
+    document.getElementById('notificacao').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('notificacao').style.display = 'none';
+    }, 3000);
+  }
+  tarefasAnteriores = tarefas;
+}
+setInterval(verificarNovasTarefas, 5000);
+</script>
+
+  </div>
+</body>
+</html>

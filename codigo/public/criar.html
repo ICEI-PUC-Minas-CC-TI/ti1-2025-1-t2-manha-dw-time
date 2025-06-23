@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Criar Tarefa</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #7C3AED;
+      color: white;
+      padding: 20px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+    .content {
+      flex: 1;
+      background: #fff;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 28px;
+      color: #7C3AED;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  
+<script>
+if (!localStorage.getItem("usuarioLogado")) {
+  window.location.href = "login.html";
+}
+</script>
+
+  
+<div class="sidebar">
+  <h2 id="bemvindo">Menu</h2>
+  <a href="criar.html">➕ Criar Tarefa</a>
+  <a href="atrasadas.html">⏰ Atrasadas</a>
+  <a href="afazer.html">📝 A Fazer</a>
+  <a href="concluidas.html">✅ Concluídas</a>
+  <a href="filtrar.html">🔎 Filtrar</a>
+  <a href="login.html" onclick="localStorage.clear()">🚪 Sair</a>
+</div>
+<script>
+  const nome = localStorage.getItem("nomeLogado") || '';
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("bemvindo").innerText = `Olá, ${nome}`;
+  });
+</script>
+
+  <div class="content">
+    <h1>Criar Tarefa</h1>
+    
+<h1>Criar Tarefa</h1>
+<form onsubmit="criarTarefa(); return false;">
+  <input type="text" id="titulo" placeholder="Título" required><br>
+  <input type="date" id="data" required><br>
+  <select id="categoria">
+    <option value="Pessoal">Pessoal</option>
+    <option value="Trabalho">Trabalho</option>
+    <option value="Estudo">Estudo</option>
+  </select><br>
+  <select id="importancia">
+    <option value="Alta">Alta</option>
+    <option value="Média">Média</option>
+    <option value="Baixa">Baixa</option>
+  </select><br>
+  <textarea id="observacoes" placeholder="Observações (opcional)"></textarea><br>
+  <button type="submit">Criar</button>
+</form>
+<script>
+async function criarTarefa() {
+  const titulo = document.getElementById('titulo').value;
+  const data = document.getElementById('data').value;
+  const categoria = document.getElementById('categoria').value;
+  const importancia = document.getElementById('importancia').value;
+  const observacoes = document.getElementById('observacoes').value;
+  const horaCriacao = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  await fetch('http://localhost:3000/tarefas', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ titulo, data, categoria, importancia, observacoes, horaCriacao, concluida: false })
+  });
+  alert("Tarefa criada com sucesso!");
+  document.querySelector("form").reset();
+}
+</script>
+
+  </div>
+</body>
+</html>
