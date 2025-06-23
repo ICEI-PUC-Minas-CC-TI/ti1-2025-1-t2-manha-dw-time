@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filtrar Tarefas - DWTime</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-dark: #5B21B6;
+      --white: #FFFFFF;
+      --gray-light: #F3F4F6;
+      --gray-dark: #6B7280;
+      --danger: #EF4444;
+      --success: #10B981;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--gray-light);
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    
+    h1 {
+      color: var(--primary-dark);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .filter-group {
+      margin-bottom: 15px;
+    }
+    
+    .filter-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+    
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .filter-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: var(--gray-light);
+      color: var(--gray-dark);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e2e2e2;
+    }
+    
+    .tasks-list {
+      margin-top: 20px;
+    }
+    
+    .task-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .task-item:last-child {
+      border-bottom: none;
+    }
+    
+    .task-info h3 {
+      margin-bottom: 5px;
+      color: var(--primary-dark);
+    }
+    
+    .task-meta {
+      font-size: 0.9rem;
+      color: var(--gray-dark);
+    }
+    
+    .task-actions button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      font-size: 0.9rem;
+    }
+    
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .no-tasks {
+      text-align: center;
+      padding: 30px;
+      color: var(--gray-dark);
+    }
+    
+    .date-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Filtrar Tarefas</h1>
+    
+    <div class="filters">
+      <div class="filter-group">
+        <label for="search">Buscar por nome</label>
+        <input type="text" id="search" placeholder="Digite o nome da tarefa">
+      </div>
+      
+      <div class="filter-group">
+        <label for="status">Status</label>
+        <select id="status">
+          <option value="">Todos</option>
+          <option value="pendente">Pendente</option>
+          <option value="concluida">Concluída</option>
+          <option value="atrasada">Atrasada</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>Período</label>
+        <div class="date-inputs">
+          <input type="date" id="start-date" placeholder="Data inicial">
+          <input type="date" id="end-date" placeholder="Data final">
+        </div>
+      </div>
+    </div>
+    
+    <div class="filter-actions">
+      <button class="btn btn-secondary" id="reset-filters">Limpar filtros</button>
+      <button class="btn btn-primary" id="apply-filters">Aplicar filtros</button>
+    </div>
+    
+    <div class="tasks-list" id="tasks-container">
+      <div class="no-tasks">Nenhuma tarefa encontrada. Aplique os filtros para visualizar as tarefas.</div>
+    </div>
+  </div>
+  
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+
+  <script>
+    // URL da API
+    const API_URL = "http://localhost:3000/tarefas";
+    
+    // Elementos DOM
+    const tasksContainer = document.getElementById('tasks-container');
+    const loadingElement = document.getElementById('loading');
+    const searchInput = document.getElementById('search');
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
+    const statusSelect = document.getElementById('status');
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    const resetFiltersBtn = document.getElementById('reset-filters');
+    
+    // Carregar tarefas ao carregar a página
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarTarefas();
+      
+      // Configurar eventos
+      applyFiltersBtn.addEventListener('click', carregarTarefas);
+      resetFiltersBtn.addEventListener('click', resetarFiltros);
+    });
+    
+    // Função para carregar tarefas com filtros
+    async function carregarTarefas() {
+      try {
+        // Mostrar loading
+        loadingElement.style.display = 'flex';
+        tasksContainer.innerHTML = '';
+        
+        // Obter valores dos filtros
+        const search = searchInput.value.trim();
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+        const status = statusSelect.value;
+        
+        // Construir URL com parâmetros de filtro
+        let url = API_URL;
+        const params = [];
+        
+        if (search) params.push(`q=${encodeURIComponent(search)}`);
+        if (startDate) params.push(`data_gte=${startDate}`);
+        if (endDate) params.push(`data_lte=${endDate}`);
+        if (status) params.push(`status=${status}`);
+        
+        if (params.length > 0) {
+          url += `?${params.join('&')}`;
+        }
+        
+        // Fazer requisição
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
+        const tarefas = await response.json();
+        
+        // Exibir tarefas
+        exibirTarefas(tarefas);
+        
+      } catch (error) {
+        console.error("Erro ao carregar tarefas:", error);
+        tasksContainer.innerHTML = `
+          <div class="no-tasks">
+            Ocorreu um erro ao carregar as tarefas. Por favor, tente novamente.
+            <p>${error.message}</p>
+          </div>
+        `;
+      } finally {
+        // Esconder loading
+        loadingElement.style.display = 'none';
+      }
+    }
+    
+    // Função para exibir tarefas na tela
+    function exibirTarefas(tarefas) {
+      if (tarefas.length === 0) {
+        tasksContainer.innerHTML = `
+          <div class="no-tasks">
+            Nenhuma tarefa encontrada com os filtros aplicados.
+          </div>
+        `;
+        return;
+      }
+      
+      tasksContainer.innerHTML = '';
+      
+      tarefas.forEach(tarefa => {
+        const taskElement = document.createElement('div');
+        taskElement.className = 'task-item';
+        taskElement.innerHTML = `
+          <div class="task-info">
+            <h3>${tarefa.titulo || tarefa.nome}</h3>
+            <div class="task-meta">
+              <span>Data: ${formatarData(tarefa.data)}</span> | 
+              <span>Status: ${formatarStatus(tarefa.status)}</span>
+            </div>
+          </div>
+
+        `;
+        tasksContainer.appendChild(taskElement);
+      });
+    }
+    
+    // Função para formatar data
+    function formatarData(dataString) {
+      if (!dataString) return 'Não definida';
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      return new Date(dataString).toLocaleDateString('pt-BR', options);
+    }
+    
+    // Função para formatar status
+    function formatarStatus(status) {
+      const statusMap = {
+        'pendente': 'Pendente',
+        'concluida': 'Concluída',
+        'atrasada': 'Atrasada'
+      };
+      return statusMap[status] || status;
+    }
+    
+    // Função para resetar filtros
+    function resetarFiltros() {
+      searchInput.value = '';
+      startDateInput.value = '';
+      endDateInput.value = '';
+      statusSelect.value = '';
+      carregarTarefas();
+    }
+    
+    // Função para editar tarefa
+    async function editarTarefa(id) {
+      try {
+        // Obter dados da tarefa
+        const response = await fetch(`${API_URL}/${id}`);
+        if (!response.ok) {
+          throw new Error('Erro ao carregar tarefa');
+        }
+        const tarefa = await response.json();
+
+        // Pedir nova data
+        const novaData = prompt("Digite a nova data (YYYY-MM-DD):", tarefa.data);
+        if (!novaData) return;
+
+        // Validar formato da data
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(novaData)) {
+          throw new Error('Formato de data inválido. Use YYYY-MM-DD');
+        }
+
+        // Mostrar loading
+        loadingElement.style.display = 'flex';
+
+        // Atualizar tarefa
+        const updateResponse = await fetch(`${API_URL}/${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            data: novaData
+          })
+        });
+
+        if (!updateResponse.ok) {
+          throw new Error(`Erro HTTP: ${updateResponse.status}`);
+        }
+
+        // Recarregar tarefas
+        carregarTarefas();
+        
+        alert('Tarefa atualizada com sucesso!');
+        
+      } catch (error) {
+        console.error("Erro ao editar tarefa:", error);
+        alert(`Erro ao atualizar tarefa: ${error.message}`);
+      } finally {
+        // Esconder loading
+        loadingElement.style.display = 'none';
+      }
+    }
+    
+    // Função para excluir tarefa
+    async function excluirTarefa(id) {
+      if (!confirm('Tem certeza que deseja excluir esta tarefa?')) return;
+      
+      try {
+        loadingElement.style.display = 'flex';
+        
+        const response = await fetch(`${API_URL}/${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
+        carregarTarefas();
+        alert('Tarefa excluída com sucesso!');
+        
+      } catch (error) {
+        console.error("Erro ao excluir tarefa:", error);
+        alert(`Erro ao excluir tarefa: ${error.message}`);
+      } finally {
+        loadingElement.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

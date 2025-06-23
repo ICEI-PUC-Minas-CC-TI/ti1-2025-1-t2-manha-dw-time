@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Se você usar este sistema em seu projeto, cite-o como descrito abaixo."
+title: "DWTime - Sistema de Tarefas Inteligente"
+authors:
+  - family-names: "Sobrenome"
+    given-names: "Nome"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+date-released: 2025-06-21
+version: "1.0"
+repository-code: "https://github.com/usuario/dwtime"
+license: "MIT"

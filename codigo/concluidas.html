@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Concluídas</title>
+  <link rel="stylesheet" href="css/animacoes.css">
+  <link rel="stylesheet" href="css/modoEscuro.css">
+  <link rel="stylesheet" href="css/favorita.css">
+  <script src="js/modoEscuro.js"></script>
+  <script src="js/feedback.js"></script>
+  <script src="js/favorita.js"></script>
+  <script src="js/som.js"></script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin-left: 240px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .tarefa {
+      background: #f3f3f3;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .concluida {
+      border-left: 6px solid #27ae60;
+      opacity: 0.8;
+    }
+    .tarefa-conteudo {
+      margin-bottom: 10px;
+    }
+    .acoes-tarefa {
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .favoritar { 
+      background: #f1c40f;
+      color: #34495e;
+    }
+    .restaurar { 
+      background: #3498db;
+      color: white;
+    }
+    .excluir { 
+      background: #e74c3c;
+      color: white;
+    }
+    .observacoes {
+      margin-top: 10px;
+      padding: 8px;
+      background: #e8f4fc;
+      border-radius: 5px;
+      font-size: 14px;
+      border-left: 3px solid #3498db;
+    }
+    .data-conclusao {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id="feedback"></div>
+  <h1>Tarefas Concluídas</h1>
+  <div id="tarefas"></div>
+
+<script>
+  async function carregarTarefas() {
+    try {
+      const res = await fetch("http://localhost:3000/tarefas");
+      if (!res.ok) throw new Error("Falha ao carregar tarefas");
+      const tarefas = await res.json();
+      const concluidas = tarefas.filter(t => t.concluida);
+      
+      document.getElementById("tarefas").innerHTML = concluidas.map(t => `
+        <div class="tarefa concluida" id="tarefa-${t.id}">
+          <div class="tarefa-conteudo">
+            <strong>${t.nome || t.title || 'Sem nome'}</strong> - ${t.categoria || 'Sem categoria'}<br>
+            <small>Importância: ${t.importancia || 'Não definida'}</small>
+            
+            ${t.observacoes ? `
+              <div class="observacoes">
+                <strong>Observações:</strong>
+                <p>${t.observacoes}</p>
+              </div>
+            ` : ''}
+            
+            <div class="data-conclusao">
+              Concluída em: ${t.dataConclusao || 'Data não registrada'}
+            </div>
+          </div>
+          
+          <div class="acoes-tarefa">
+            <button class="favoritar" onclick="favoritar(${t.id})">⭐ Favoritar</button>
+            <button class="restaurar" onclick="restaurar(${t.id})">↩️ Restaurar</button>
+            <button class="excluir" onclick="excluir(${t.id})">🗑️ Excluir</button>
+          </div>
+        </div>
+      `).join("");
+    } catch (error) {
+      console.error("Erro:", error);
+      mostrarFeedback("Erro ao carregar tarefas concluídas");
+    }
+  }
+
+  async function restaurar(id) {
+    try {
+      const response = await fetch(`http://localhost:3000/tarefas/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ concluida: false })
+      });
+      if (!response.ok) throw new Error("Falha ao restaurar tarefa");
+      mostrarFeedback("Tarefa restaurada com sucesso!");
+      carregarTarefas();
+    } catch (error) {
+      console.error("Erro:", error);
+      mostrarFeedback("Erro ao restaurar tarefa");
+    }
+  }
+
+  // Funções excluir e favoritar permanecem iguais às anteriores
+  document.addEventListener("DOMContentLoaded", carregarTarefas);
+</script>
+</body>
+</html>

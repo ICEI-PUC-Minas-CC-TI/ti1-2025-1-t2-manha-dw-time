@@ -1,0 +1,490 @@
+<!--
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - DWTime</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-dark: #5B21B6;
+      --white: #FFFFFF;
+      --gray-light: #F3F4F6;
+      --gray-dark: #6B7280;
+      --danger: #EF4444;
+      --success: #10B981;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--gray-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    
+    .login-container {
+      background-color: var(--white);
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--primary);
+    }
+    
+    .logo {
+      color: var(--primary);
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+    
+    h2 {
+      color: var(--primary-dark);
+      margin-bottom: 25px;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+      position: relative;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--primary-dark);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #E5E7EB;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background-color: #f9fafb;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+      background-color: var(--white);
+    }
+    
+    .password-container {
+      position: relative;
+    }
+    
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: var(--gray-dark);
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+      letter-spacing: 0.5px;
+    }
+    
+    button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    button:disabled {
+      background-color: #9CA3AF;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .links {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .links a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+    
+    .links a:hover {
+      text-decoration: underline;
+    }
+    
+    .feedback {
+      margin: 15px 0;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    
+    .error {
+      background-color: #FEE2E2;
+      color: var(--danger);
+      display: block;
+      border-left: 4px solid var(--danger);
+    }
+    
+    .success {
+      background-color: #D1FAE5;
+      color: var(--success);
+      display: block;
+      border-left: 4px solid var(--success);
+    }
+    
+    .security-info {
+      font-size: 0.8rem;
+      color: var(--gray-dark);
+      margin-top: 20px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .security-info svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--success);
+    }
+    
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 25px 20px;
+      }
+      
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">⏱️</div>
+    <h2>Bem-vindo a DWTime</h2>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="usuario">Usuário</label>
+        <input type="text" id="usuario" placeholder="Usuário" required autocomplete="username">
+      </div>
+      
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <div class="password-container">
+          <input type="password" id="senha" placeholder="Sua senha" required autocomplete="current-password" minlength="8">
+          <span class="toggle-password" onclick="togglePasswordVisibility()">👁️</span>
+        </div>
+      </div>
+      
+      <div id="feedback" class="feedback"></div>
+      
+      <button type="submit" id="loginBtn">Entrar</button>
+    </form>
+    
+    <div class="links">
+      <a href="cadastro.html">Criar uma conta</a>
+      <a href="recuperar.html">Esqueci minha senha</a>
+    </div>
+    
+    <div class="security-info">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11V11.99z"/>
+      </svg>
+      Conexão segura - seus dados estão protegidos
+    </div>
+  </div>
+
+  <script>
+    // Função para alternar visibilidade da senha
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('senha');
+      const toggleIcon = document.querySelector('.toggle-password');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.textContent = '👁️';
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.textContent = '👁️';
+      }
+    }
+    
+    // Verificar se já está logado
+    if (localStorage.getItem('usuarioLogado')) {
+      window.location.href = 'dashboard.html';
+    }
+    
+    // Manipulador de login seguro
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const usuario = document.getElementById('usuario').value.trim();
+      const senha = document.getElementById('senha').value;
+      const feedback = document.getElementById('feedback');
+      const loginBtn = document.getElementById('loginBtn');
+      
+      // Validação básica
+      if (!usuario || !senha) {
+        feedback.textContent = 'Por favor, preencha todos os campos.';
+        feedback.className = 'feedback error';
+        feedback.style.display = 'block';
+        return;
+      }
+      
+      // Desabilitar botão durante a requisição
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Autenticando...';
+      
+      try {
+        // Verificação de credenciais
+        const response = await fetch(`http://localhost:3000/usuarios?usuario=${usuario}&senha=${senha}`);
+        const resultado = await response.json();
+
+        if (resultado.length === 1) {
+          localStorage.setItem("usuarioLogado", usuario);
+          localStorage.setItem("nomeLogado", resultado[0].nome);
+          feedback.textContent = 'Login realizado com sucesso!';
+          feedback.className = 'feedback success';
+          feedback.style.display = 'block';
+          
+          // Redirecionar após 1 segundo
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          throw new Error('Usuário ou senha incorretos.');
+        }
+      } catch (error) {
+        feedback.textContent = error.message || 'Erro ao realizar login. Tente novamente.';
+        feedback.className = 'feedback error';
+        feedback.style.display = 'block';
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Entrar';
+      }
+    });
+    
+    // Proteção contra ataques XSS básica
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+          e.target.value = e.target.value.replace(/<[^>]*>?/gm, '');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
+-->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Tarefas</title>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: #f3f3f3;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .auth-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    .auth-container h2 {
+      text-align: center;
+      color: #7C3AED;
+    }
+    .auth-container input, .auth-container button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .auth-container button {
+      background: #7C3AED;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .auth-container button:hover {
+      background: #5B21B6;
+    }
+    .toggle {
+      text-align: center;
+      margin-top: 15px;
+      cursor: pointer;
+      color: #7C3AED;
+    }
+    .message {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2 id="form-title">Login</h2>
+    <input type="text" id="nome" placeholder="Nome completo" style="display: none;">
+    <input type="text" id="celular" placeholder="Celular" style="display: none;">
+    <input type="text" id="usuario" placeholder="Usuário">
+    <input type="password" id="senha" placeholder="Senha">
+    <button onclick="enviarFormulario()">Entrar</button>
+    <div class="toggle" onclick="alternarFormulario()">Criar uma conta</div>
+    <div class="message" id="mensagem"></div>
+  </div>
+
+  <script>
+    let criandoConta = false;
+
+    function alternarFormulario() {
+      const nome = document.getElementById('nome');
+      const celular = document.getElementById('celular');
+      const formTitle = document.getElementById('form-title');
+      const toggle = document.querySelector('.toggle');
+      const botao = document.querySelector('button');
+
+      criandoConta = !criandoConta;
+      nome.style.display = criandoConta ? 'block' : 'none';
+      celular.style.display = criandoConta ? 'block' : 'none';
+      formTitle.innerText = criandoConta ? 'Criar Conta' : 'Login';
+      toggle.innerText = criandoConta ? 'Já tem conta? Fazer login' : 'Criar uma conta';
+      botao.innerText = criandoConta ? 'Cadastrar' : 'Entrar';
+    }
+
+    async function enviarFormulario() {
+      if (criandoConta) {
+        criarConta();
+      } else {
+        loginUsuario();
+      }
+    }
+
+    async function criarConta() {
+      const nome = document.getElementById('nome').value;
+      const celular = document.getElementById('celular').value;
+      const usuario = document.getElementById('usuario').value;
+      const senha = document.getElementById('senha').value;
+      const msg = document.getElementById('mensagem');
+
+      if (!nome || !celular || !usuario || !senha) {
+        msg.innerText = "Preencha todos os campos!";
+        msg.style.color = "red";
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/usuarios?usuario=${usuario}`);
+      const existe = await response.json();
+      if (existe.length > 0) {
+        msg.innerText = "Usuário já cadastrado!";
+        msg.style.color = "red";
+        return;
+      }
+
+      await fetch(`http://localhost:3000/usuarios`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, celular, usuario, senha })
+      });
+
+      msg.innerText = "Conta criada com sucesso!";
+      msg.style.color = "green";
+    }
+
+    async function loginUsuario() {
+      const usuario = document.getElementById('usuario').value;
+      const senha = document.getElementById('senha').value;
+      const msg = document.getElementById('mensagem');
+
+      if (!usuario || !senha) {
+        msg.innerText = "Preencha todos os campos!";
+        msg.style.color = "red";
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/usuarios?usuario=${usuario}&senha=${senha}`);
+      const resultado = await response.json();
+
+      if (resultado.length === 1) {
+        localStorage.setItem("usuarioLogado", usuario);
+        localStorage.setItem("nomeLogado", resultado[0].nome);
+        msg.innerText = "Login bem-sucedido!";
+        msg.style.color = "green";
+        setTimeout(() => {
+          window.location.href = "calendario.html";
+        }, 1000);
+      } else {
+        msg.innerText = "Usuário ou senha incorretos.";
+        msg.style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>

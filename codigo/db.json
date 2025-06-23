@@ -1,0 +1,48 @@
+{
+  "usuarios": [
+    {
+      "id": "ea7c",
+      "nome": "Gustavo Henrique de Oliveira Chaves",
+      "celular": "37999702005",
+      "email": "gu10chaves53@gmail.com",
+      "senha": "123456789"
+    }
+  ],
+  "logs_acesso": [],
+  "tarefas": [
+    {
+      "id": "4bca",
+      "nome": "Gustavo Henrique de Oliveira Chaves",
+      "categoria": "Casa",
+      "data": "2025-06-25",
+      "importancia": "alta",
+      "observacoes": "",
+      "concluida": false,
+      "favorita": false,
+      "dataCriacao": "2025-06-22T21:29:07.606Z"
+    },
+    {
+      "id": "9ee3",
+      "nome": "GUSTAVO H O CHAVES",
+      "categoria": "Casa",
+      "data": "2025-06-22",
+      "importancia": "media",
+      "observacoes": "",
+      "concluida": false,
+      "favorita": false,
+      "dataCriacao": "2025-06-22T21:36:57.783Z",
+      "status": "pendente"
+    },
+    {
+      "id": "7baa",
+      "nome": "Fernando",
+      "categoria": "Casas",
+      "data": "2025-06-23",
+      "importancia": "alta",
+      "observacoes": "scaasas",
+      "concluida": false,
+      "favorita": false,
+      "dataCriacao": "2025-06-22T23:14:26.995Z"
+    }
+  ]
+}

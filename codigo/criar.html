@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Criar Tarefa</title>
+  <link rel="stylesheet" href="css/modoEscuro.css">
+  <script src="js/modoEscuro.js"></script>
+  <script src="js/feedback.js"></script>
+  <script src="js/som.js"></script>
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      margin-left: 240px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+    .form-container {
+      max-width: 600px;
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #34495e;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .btn {
+      padding: 10px 20px;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: #27ae60;
+    }
+    .btn-voltar {
+      background: #95a5a6;
+      margin-right: 10px;
+    }
+    .btn-voltar:hover {
+      background: #7f8c8d;
+    }
+    .botoes-acao {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .required-field::after {
+      content: " *";
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <div id="feedback"></div>
+  <h1>Criar Nova Tarefa</h1>
+  
+  <div class="form-container">
+    <div class="form-group">
+      <label for="nome" class="required-field">Nome da Tarefa</label>
+      <input type="text" id="nome" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="categoria">Categoria</label>
+      <input type="text" id="categoria" placeholder="Ex: Trabalho, Estudo, Pessoal">
+    </div>
+    
+    <div class="form-group">
+      <label for="data" class="required-field">Data</label>
+      <input type="date" id="data" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="importancia" class="required-field">Importância</label>
+      <select id="importancia" required>
+        <option value="baixa">Baixa</option>
+        <option value="media" selected>Média</option>
+        <option value="alta">Alta</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="observacoes">Observações</label>
+      <textarea id="observacoes" placeholder="Detalhes adicionais sobre a tarefa..."></textarea>
+    </div>
+    
+    <div class="botoes-acao">
+      <button class="btn btn-voltar" onclick="window.location.href='calendario.html'">← Voltar</button>
+      <button class="btn" onclick="criarTarefa()">Salvar Tarefa</button>
+    </div>
+  </div>
+
+<script>
+  // Define a data atual como padrão
+  document.getElementById('data').valueAsDate = new Date();
+
+  async function criarTarefa() {
+    const nome = document.getElementById('nome').value.trim();
+    const data = document.getElementById('data').value;
+    
+    if (!nome || !data) {
+      mostrarFeedback("Preencha os campos obrigatórios marcados com *", "erro");
+      return;
+    }
+
+    const tarefa = {
+      nome: nome,
+      categoria: document.getElementById('categoria').value.trim(),
+      data: data,
+      importancia: document.getElementById('importancia').value,
+      observacoes: document.getElementById('observacoes').value.trim(),
+      concluida: false,
+      favorita: false,
+      dataCriacao: new Date().toISOString()
+    };
+
+    try {
+      const response = await fetch("http://localhost:3000/tarefas", {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(tarefa)
+      });
+
+      if (!response.ok) throw new Error(await response.text());
+      
+      mostrarFeedback("Tarefa criada com sucesso!");
+      document.getElementById('nome').value = '';
+      document.getElementById('observacoes').value = '';
+      
+      setTimeout(() => {
+        window.location.href = "calendario.html";
+      }, 1500);
+    } catch (error) {
+      console.error("Erro ao criar tarefa:", error);
+      mostrarFeedback(`Erro: ${error.message}`, "erro");
+    }
+  }
+
+  // Permite submeter com Enter
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') criarTarefa();
+    });
+  });
+</script>
+</body>
+</html>
